@@ -1,0 +1,155 @@
+<html>
+	<head>
+		<script src="js/jquery.js"></script>
+		<script>
+			var config = {
+				width: 20,
+				height: 10,
+				delay: 1000
+			};
+		
+			$("document").ready(function(){
+				build_table();
+				$("#out td").click(start_maze);
+			});
+			
+			function build_table(){
+				for(var i=0; i<config.height; i++){
+					var tr = $("<tr></tr>");
+					for(var j=0; j<config.width; j++){
+						var td = $("<td></td>");
+						td.data("tile", false);
+						tr.append(td);
+					}
+					$("#out tbody").append(tr);
+				}
+			}
+		
+			function start_maze(){
+				var coords = coords_from_td(this);
+				var start_edge = rand(4);
+				place_tile(coords, start_edge);
+			}
+			
+			function place_tile(coords, start_edge){
+				
+				// if it's outside the range
+				if(coords.x<0 || coords.x>=config.width || coords.y<0 || coords.y>=config.height){
+					end_maze();
+					return false;
+				}
+			
+				// get the td we're entering
+				var td = td_from_coords(coords);
+			
+				// if that td is already taken
+				if(td.data("tile")){
+					end_maze();
+					return false;
+				}
+				
+				// fill in the tile
+				var tile = select_tile_by_start_edge(start_edge);
+				td.data("tile", tile);
+				td.css("background", "url('"+tile.img+"')");
+				
+				return;
+				
+				// set up the next round
+				var next_coords = get_next_coords_from_td(td);
+				var next_start_edge = get_next_start_edge_from_td(td);
+				setTimeout(
+					function(){place_tile(next_coords, next_start_edge)},
+					config.delay
+				);
+			}
+			
+			function end_maze(){
+				alert("maze is over");
+			}
+			
+			function select_tile_by_start_edge(start_edge){
+			
+				var good_tiles = new Array();
+				
+				$(tiles).each(function(i, obj){
+					$(obj.path).each(function(j, el){
+						if(el == start_edge){good_tiles.push(obj);}
+					});
+				});
+				
+				return good_tiles[rand(good_tiles.length)];
+			}
+			
+			function get_next_coords_from_td(td){
+			
+				var coords = {
+					x: 6,
+					y: 2
+				};
+				
+				return coords;
+			}
+			
+			function get_next_start_edge_from_td(td){
+				return 2;
+			}
+			
+			function rand(max){
+				return Math.floor(Math.random() * max);
+			}
+			
+			function td_from_coords(coords){
+				var tr = $("#out tbody tr")[coords.y];
+				var td = $(tr).find("td")[coords.x];
+				return $(td);
+			}
+			
+			function coords_from_td(td){
+				return {x: td.cellIndex, y: td.parentNode.rowIndex};
+			}
+			
+			function tile(img, path){
+				this.img = img;
+				this.path = path;
+			}
+			
+			var tiles = [
+				new tile("img/tr.png", [0, 1]),
+				new tile("img/br.png", [1, 2]),
+				new tile("img/bl.png", [2, 3]),
+				new tile("img/tl.png", [3, 0]),
+				new tile("img/hori.png", [1, 3]),
+				new tile("img/vert.png", [0, 2]),
+			];
+		
+		</script>
+		<style>
+			#out{
+				border-collapse:collapse;
+			}
+		
+			#out tbody tr td{
+				border: 1px solid black;
+				width: 30px;
+				height: 30px;
+				padding: 0px;
+				margin: 0px;
+			}
+	
+		</style>
+	</head>
+	<body>
+		<table id="out">
+			<tbody>
+			
+		
+		
+			</tbody>
+		</table>
+	
+	
+	
+	
+	</body>
+</html>
