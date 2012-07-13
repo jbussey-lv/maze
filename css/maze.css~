@@ -1,0 +1,12 @@
+
+#maze_table{
+	border-collapse:collapse;
+}
+
+#maze_table td{
+	border: 0px solid #CCC;
+	width: 15px;
+	height: 15px;
+	padding: 0px;
+	margin: 0px;
+}

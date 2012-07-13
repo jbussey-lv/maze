@@ -7,7 +7,7 @@
 			var config = {
 				width: 80,
 				height: 40,
-				delay: 70
+				delay: 100
 			};
 		
 			$("document").ready(function(){
